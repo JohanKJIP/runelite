@@ -95,6 +95,7 @@ public class WildernessIndicatorPlugin extends Plugin
                 Player p = players.get(i);
                 if (p != localPlayer && Math.abs(p.getCombatLevel() - localPlayer.getCombatLevel()) <= wildernessLevel)
                 {
+                    // TODO overlay player
                     System.out.println("YOU CAN BE ATTACKED");
                 }
             }
