@@ -31,4 +31,37 @@ public interface WildernessIndicatorConfig extends Config
     {
         return Color.RED;
     }
+
+    @ConfigItem(
+            position = 3,
+            keyName = "showPanel",
+            name = "Show panel",
+            description = "Enables or disables the info panel in the top left"
+    )
+    default boolean showPanelWarning()
+    {
+        return true;
+    }
+
+    @ConfigItem(
+            position = 4,
+            keyName = "showFriends",
+            name = "Show friends",
+            description = "Display if friends can attack you"
+    )
+    default boolean showFriends()
+    {
+        return true;
+    }
+
+    @ConfigItem(
+            position = 5,
+            keyName = "showClan",
+            name = "Show clan members",
+            description = "Display if clan members can attack you"
+    )
+    default boolean showClan()
+    {
+        return true;
+    }
 }

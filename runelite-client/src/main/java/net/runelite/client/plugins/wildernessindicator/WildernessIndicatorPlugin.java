@@ -30,6 +30,8 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
+import lombok.AccessLevel;
+import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.events.GameTick;
@@ -42,9 +44,11 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.ui.overlay.OverlayManager;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,41 +67,65 @@ public class WildernessIndicatorPlugin extends Plugin
     @Inject
     private WildernessIndicatorConfig config;
 
+    @Inject
+    private OverlayManager overlayManager;
+
+    @Inject
+    private WildernessIndicatorOverlay overlay;
+
     @Provides
     WildernessIndicatorConfig provideConfig(ConfigManager configManager)
     {
         return configManager.getConfig(WildernessIndicatorConfig.class);
     }
 
+    @Getter(AccessLevel.PACKAGE)
+    private boolean isInWilderness;
+
+    @Getter(AccessLevel.PACKAGE)
+    private boolean isAttackable;
+
+    @Getter(AccessLevel.PACKAGE)
+    private List<Player> playersAbleToAttack;
+
     @Override
     protected void startUp() throws Exception
     {
-
+        overlayManager.add(overlay);
     }
 
     @Override
     protected void shutDown() throws Exception
     {
-
+        overlayManager.remove(overlay);
     }
 
     @Subscribe
     public void onGameTick(GameTick gameTick)
     {
         final Player localPlayer = client.getLocalPlayer();
+        playersAbleToAttack = new ArrayList<>();
         int wildernessLevel = getWildernessLevel();
         if (wildernessLevel > 0)
         {
-            System.out.println("Wilderness level: " + wildernessLevel);
+            isInWilderness = true;
             List<Player> players = client.getPlayers();
-            for (int i = 0; i < players.size(); i++)
+            boolean someoneCanAttack = false;
+            for (Player p: players)
             {
-                Player p = players.get(i);
                 if (p != localPlayer && Math.abs(p.getCombatLevel() - localPlayer.getCombatLevel()) <= wildernessLevel)
                 {
-                    // TODO overlay player
-                    System.out.println("YOU CAN BE ATTACKED");
+                    isAttackable = true;
+                    someoneCanAttack = true;
+                    playersAbleToAttack.add(p);
                 }
+            }
+            if (!someoneCanAttack) isAttackable = false;
+        } else
+            {
+            if (isInWilderness)
+            {
+                isInWilderness = false;
             }
         }
     }
@@ -109,8 +137,11 @@ public class WildernessIndicatorPlugin extends Plugin
         if (wildernessWidget != null)
         {
             String wildernessLevel = wildernessWidget.getText();
-            return Integer.parseInt(wildernessLevel.split(" ")[1]);
-
+            String[] wildyData = wildernessLevel.split(" ");
+            if (wildyData.length == 2)
+            {
+                return Integer.parseInt(wildernessLevel.split(" ")[1]);
+            }
         }
         return 0;
     }
