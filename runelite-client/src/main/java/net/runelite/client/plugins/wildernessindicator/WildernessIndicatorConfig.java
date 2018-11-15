@@ -35,7 +35,7 @@ public interface WildernessIndicatorConfig extends Config
     @ConfigItem(
             position = 3,
             keyName = "showPanel",
-            name = "Show panel",
+            name = "Display panel",
             description = "Enables or disables the info panel in the top left"
     )
     default boolean showPanelWarning()

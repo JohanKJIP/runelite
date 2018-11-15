@@ -30,26 +30,24 @@ public class WildernessIndicatorOverlay extends Overlay {
 
     @Override
     public Dimension render(Graphics2D graphics) {
-        if (!config.showPanelWarning())
+        if (config.showPanelWarning())
         {
-            return null;
-        }
-
-        panelComponent.getChildren().clear();
-        if (plugin.isInWilderness())
-        {
-            if (plugin.isAttackable())
+            panelComponent.getChildren().clear();
+            if (plugin.isInWilderness())
             {
-                panelComponent.getChildren().add(TitleComponent.builder()
-                        .text("You are not safe!")
-                        .color(Color.RED)
-                        .build());
-            } else
+                if (plugin.isAttackable())
                 {
-                panelComponent.getChildren().add(TitleComponent.builder()
-                        .text("You are safe")
-                        .color(Color.GREEN)
-                        .build());
+                    panelComponent.getChildren().add(TitleComponent.builder()
+                            .text("You are not safe!")
+                            .color(Color.RED)
+                            .build());
+                } else
+                {
+                    panelComponent.getChildren().add(TitleComponent.builder()
+                            .text("You are safe")
+                            .color(Color.GREEN)
+                            .build());
+                }
             }
         }
 
