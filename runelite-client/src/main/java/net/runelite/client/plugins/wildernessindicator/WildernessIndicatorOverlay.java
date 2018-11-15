@@ -10,7 +10,6 @@ import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 
 import java.awt.*;
-import java.util.List;
 
 public class WildernessIndicatorOverlay extends Overlay {
     private final Client client;
@@ -51,7 +50,8 @@ public class WildernessIndicatorOverlay extends Overlay {
             }
         }
 
-        for (Player p: plugin.getPlayersAbleToAttack()) {
+        for (Player p: plugin.getPlayersAbleToAttack())
+        {
             if ((!config.showFriends() && p.isFriend()) || (!config.showClan() && p.isClanMember())) continue;
             String text = "DANGER";
             OverlayUtil.renderActorOverlay(graphics, p, text, config.colorConfig());
